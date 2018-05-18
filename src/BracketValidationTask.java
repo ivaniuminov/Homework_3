@@ -1,4 +1,4 @@
-import com.sun.javaws.exceptions.InvalidArgumentException;
+package com.iuminov.classes;
 
 public class BracketValidationTask {
     public static void main(String[] args) {
@@ -8,51 +8,25 @@ public class BracketValidationTask {
         testString(input2);
     }
 
-    private static void testString(String input) {
+    static String testString(String input) {
         char[] array = input.toCharArray();
         char[] cacheArray = new char[input.length()];
         int cachePosition = 0;
         boolean couldBeCorrect = true;
 
-        int i = 0;
-        while (couldBeCorrect && i < array.length) {
-            switch (array[i]) {
-                case '{':
-                case '[':
-                case '(':
-                    cacheArray[cachePosition] = getReverseBracket(array[i]);
-                    cachePosition++;
-                    break;
-                case '}':
-                case ']':
-                case ')':
-                    if (cachePosition - 1 < 0 || cacheArray[cachePosition - 1] != array[i]) {
-                        couldBeCorrect = false;
-                    } else {
-                        cachePosition--;
-                    }
-                    break;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == '{' || array[i] == '[' || array[i] == '(') {
+                cacheArray[cachePosition] = array[i];
+                cachePosition++;
+            } else if (cachePosition == 0 || (array[i] - cacheArray[cachePosition - 1] > 2) || (array[i] - cacheArray[cachePosition - 1] < 1)) {
+                couldBeCorrect = false;
+                break;
+            } else {
+                cachePosition--;
+                cacheArray[cachePosition] = '\u0000';
             }
-            i++;
         }
-        System.out.println(couldBeCorrect ? "is correct" : "isn't correct");
-    }
 
-    private static char getReverseBracket(char ch) {
-        char result;
-        switch (ch) {
-            case '{':
-                result = '}';
-                break;
-            case '[':
-                result = ']';
-                break;
-            case '(':
-                result = ')';
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported character");
-        }
-        return result;
+        return couldBeCorrect && cachePosition == 0 ? "is correct" : "isn't correct";
     }
 }

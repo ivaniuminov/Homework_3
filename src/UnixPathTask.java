@@ -1,6 +1,7 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
-public class UnixPath_Task {
+public class UnixPathTask {
     private static int cachePosition = 0;
     private static String[] cacheArray;
 
@@ -15,16 +16,15 @@ public class UnixPath_Task {
     private static String execute(String input) {
         char[] inputArray = (input + "/").toCharArray();
         StringBuilder cache = new StringBuilder();
-        cacheArray = new String[inputArray.length];
+        cacheArray = new String[inputArray.length / 2 + 1];
 
         for (int i = 0; i < inputArray.length; i++) {
             cache.append(inputArray[i]);
 
             if (inputArray[i] == '/') {
-                String cacheString = cache.toString();
-                if (cacheString.equals("//") || cacheString.equals("/./")) {
+                if (cache.toString().equals("//") || cache.toString().equals("/./")) {
                     cache.setLength(1);
-                } else if (cacheString.equals("/../")) {
+                } else if (cache.toString().equals("/../")) {
                     removeTopFromCache();
                     cache.setLength(1);
                 } else {
@@ -39,8 +39,10 @@ public class UnixPath_Task {
             cacheArray[cachePosition] = cache.toString();
             cachePosition++;
         }
-        String result = prepareResult();
-        return result;
+
+        return Arrays.stream(cacheArray)
+                .filter(str -> str != null)
+                .reduce("", String::concat);
     }
 
     private static void removeTopFromCache() {
@@ -56,14 +58,5 @@ public class UnixPath_Task {
         }
         cacheArray[cachePosition] = cache.deleteCharAt(cache.length() - 1).toString();
         cachePosition++;
-    }
-
-    private static String prepareResult() {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < cachePosition; i++) {
-            result.append(cacheArray[i]);
-        }
-
-        return result.toString();
     }
 }
