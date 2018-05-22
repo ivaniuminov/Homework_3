@@ -1,32 +1,29 @@
-package com.iuminov.classes;
+import java.util.Stack;
 
 public class BracketValidationTask {
     public static void main(String[] args) {
         String input = "()[({(())})]";
         String input2 = "([)]";
-        testString(input);
-        testString(input2);
+        System.out.println(testString(input));
+        System.out.println(testString(input2));
     }
 
     static String testString(String input) {
         char[] array = input.toCharArray();
-        char[] cacheArray = new char[input.length()];
-        int cachePosition = 0;
+        Stack<Character> stack = new Stack<>();
         boolean couldBeCorrect = true;
 
         for (int i = 0; i < array.length; i++) {
             if (array[i] == '{' || array[i] == '[' || array[i] == '(') {
-                cacheArray[cachePosition] = array[i];
-                cachePosition++;
-            } else if (cachePosition == 0 || (array[i] - cacheArray[cachePosition - 1] > 2) || (array[i] - cacheArray[cachePosition - 1] < 1)) {
+            	stack.push(array[i]);
+            } else if (stack.isEmpty() || (array[i] - stack.peek() > 2) || (array[i] - stack.peek() < 1)) {
                 couldBeCorrect = false;
                 break;
             } else {
-                cachePosition--;
-                cacheArray[cachePosition] = '\u0000';
+                stack.pop();
             }
         }
 
-        return couldBeCorrect && cachePosition == 0 ? "is correct" : "isn't correct";
+        return couldBeCorrect && stack.empty() ? "is correct" : "isn't correct";
     }
 }
