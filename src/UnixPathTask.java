@@ -1,11 +1,10 @@
-import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Stack;
 
 public class UnixPathTask {
-    private static int cachePosition = 0;
-    private static String[] cacheArray;
+    static Stack<String> cacheStack = new Stack<>();
 
-    public static void main(String[] args) {
+public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String input = sc.nextLine();
 
@@ -13,10 +12,9 @@ public class UnixPathTask {
         System.out.println(result);
     }
 
-    private static String execute(String input) {
+    static String execute(String input) {
         char[] inputArray = (input + "/").toCharArray();
         StringBuilder cache = new StringBuilder();
-        cacheArray = new String[inputArray.length / 2 + 1];
 
         for (int i = 0; i < inputArray.length; i++) {
             cache.append(inputArray[i]);
@@ -35,20 +33,17 @@ public class UnixPathTask {
             }
         }
 
-        if (cache.length() != 1 || (cache.length() == 1 && cachePosition == 0)) {
-            cacheArray[cachePosition] = cache.toString();
-            cachePosition++;
+        if (cache.length() != 1 || (cache.length() == 1 && cacheStack.empty())) {
+            cacheStack.push(cache.toString());
         }
 
-        return Arrays.stream(cacheArray)
-                .filter(str -> str != null)
+        return cacheStack.stream()
                 .reduce("", String::concat);
     }
 
     private static void removeTopFromCache() {
-        cacheArray[cachePosition] = null;
-        if (cachePosition > 0) {
-            cachePosition--;
+        if (!cacheStack.empty()) {
+            cacheStack.pop();
         }
     }
 
@@ -56,7 +51,6 @@ public class UnixPathTask {
         if (cache.length() == 1) {
             return;
         }
-        cacheArray[cachePosition] = cache.deleteCharAt(cache.length() - 1).toString();
-        cachePosition++;
+        cacheStack.push(cache.deleteCharAt(cache.length() - 1).toString());
     }
 }
